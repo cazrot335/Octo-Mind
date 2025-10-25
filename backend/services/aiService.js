@@ -54,7 +54,9 @@ class AIService {
         messages: [
           {
             role: 'system',
-            content: 'You are a task prioritization assistant. Always respond with valid JSON only.'
+            content: `You are an AI productivity assistant.
+Given this user mood and task list, assign a priority (1 = highest) and explain briefly.
+Respond in JSON format only.`
           },
           {
             role: 'user',

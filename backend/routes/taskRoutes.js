@@ -8,6 +8,12 @@ router.post('/', taskController.createTask);
 // Get all tasks
 router.get('/', taskController.getAllTasks);
 
+// Get pending tasks only
+router.get('/pending', taskController.getPendingTasks);
+
+// Get completed tasks only
+router.get('/completed', taskController.getCompletedTasks);
+
 // Get a single task by ID
 router.get('/:id', taskController.getTaskById);
 
@@ -16,6 +22,10 @@ router.put('/:id', taskController.updateTask);
 
 // Delete a task
 router.delete('/:id', taskController.deleteTask);
+
+// Mark task as done/undone
+router.patch('/:id/done', taskController.markTaskDone);
+router.patch('/:id/undone', taskController.markTaskUndone);
 
 // AI Prioritization endpoint
 router.post('/prioritize', taskController.prioritizeTasks);

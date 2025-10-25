@@ -24,6 +24,8 @@ const createTask = async (req, res) => {
       mood: mood || null,
       priority: null,
       reason: reason || null,
+      isCompleted: false,
+      completedAt: null,
       createdAt: new Date().toISOString()
     };
 
@@ -61,6 +63,70 @@ const getAllTasks = async (req, res) => {
   } catch (error) {
     console.error('Error fetching tasks:', error);
     res.status(500).json({ error: 'Failed to fetch tasks' });
+  }
+};
+
+/**
+ * Get pending tasks (not completed)
+ */
+const getPendingTasks = async (req, res) => {
+  try {
+    const snapshot = await getDb().collection(tasksCollection)
+      .where('isCompleted', '==', false)
+      .get();
+    
+    const tasks = [];
+    snapshot.forEach(doc => {
+      tasks.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
+    // Sort in memory by createdAt (newest first)
+    tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    res.status(200).json({ 
+      count: tasks.length,
+      tasks 
+    });
+  } catch (error) {
+    console.error('Error fetching pending tasks:', error);
+    res.status(500).json({ error: 'Failed to fetch pending tasks' });
+  }
+};
+
+/**
+ * Get completed tasks
+ */
+const getCompletedTasks = async (req, res) => {
+  try {
+    const snapshot = await getDb().collection(tasksCollection)
+      .where('isCompleted', '==', true)
+      .get();
+    
+    const tasks = [];
+    snapshot.forEach(doc => {
+      tasks.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
+    // Sort in memory by completedAt (newest first)
+    tasks.sort((a, b) => {
+      const dateA = a.completedAt ? new Date(a.completedAt) : new Date(0);
+      const dateB = b.completedAt ? new Date(b.completedAt) : new Date(0);
+      return dateB - dateA;
+    });
+
+    res.status(200).json({ 
+      count: tasks.length,
+      tasks 
+    });
+  } catch (error) {
+    console.error('Error fetching completed tasks:', error);
+    res.status(500).json({ error: 'Failed to fetch completed tasks' });
   }
 };
 
@@ -135,6 +201,70 @@ const deleteTask = async (req, res) => {
   } catch (error) {
     console.error('Error deleting task:', error);
     res.status(500).json({ error: 'Failed to delete task' });
+  }
+};
+
+/**
+ * Mark a task as done
+ */
+const markTaskDone = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const docRef = getDb().collection(tasksCollection).doc(id);
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    await docRef.update({
+      isCompleted: true,
+      completedAt: new Date().toISOString()
+    });
+
+    const updatedDoc = await docRef.get();
+    res.status(200).json({
+      message: 'Task marked as done',
+      task: {
+        id: updatedDoc.id,
+        ...updatedDoc.data()
+      }
+    });
+  } catch (error) {
+    console.error('Error marking task as done:', error);
+    res.status(500).json({ error: 'Failed to mark task as done' });
+  }
+};
+
+/**
+ * Mark a task as undone
+ */
+const markTaskUndone = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const docRef = getDb().collection(tasksCollection).doc(id);
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ error: 'Task not found' });
+    }
+
+    await docRef.update({
+      isCompleted: false,
+      completedAt: null
+    });
+
+    const updatedDoc = await docRef.get();
+    res.status(200).json({
+      message: 'Task marked as undone',
+      task: {
+        id: updatedDoc.id,
+        ...updatedDoc.data()
+      }
+    });
+  } catch (error) {
+    console.error('Error marking task as undone:', error);
+    res.status(500).json({ error: 'Failed to mark task as undone' });
   }
 };
 
@@ -221,8 +351,12 @@ const prioritizeTasks = async (req, res) => {
 module.exports = {
   createTask,
   getAllTasks,
+  getPendingTasks,
+  getCompletedTasks,
   getTaskById,
   updateTask,
   deleteTask,
+  markTaskDone,
+  markTaskUndone,
   prioritizeTasks
 };

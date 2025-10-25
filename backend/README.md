@@ -95,9 +95,13 @@ Server will run on `http://localhost:3000`
 
 - `POST /api/tasks` - Create a new task
 - `GET /api/tasks` - Get all tasks
+- `GET /api/tasks/pending` - Get only pending (not completed) tasks
+- `GET /api/tasks/completed` - Get only completed tasks
 - `GET /api/tasks/:id` - Get a task by ID
 - `PUT /api/tasks/:id` - Update a task
 - `DELETE /api/tasks/:id` - Delete a task
+- `PATCH /api/tasks/:id/done` - Mark a task as done
+- `PATCH /api/tasks/:id/undone` - Mark a task as undone
 - `POST /api/tasks/prioritize` - AI prioritize tasks based on mood
 
 ### Health Check
@@ -125,6 +129,30 @@ curl -X POST http://localhost:3000/api/tasks \
 curl http://localhost:3000/api/tasks
 ```
 
+### Get Pending Tasks Only
+
+```bash
+curl http://localhost:3000/api/tasks/pending
+```
+
+### Get Completed Tasks Only
+
+```bash
+curl http://localhost:3000/api/tasks/completed
+```
+
+### Mark Task as Done
+
+```bash
+curl -X PATCH http://localhost:3000/api/tasks/TASK_ID/done
+```
+
+### Mark Task as Undone
+
+```bash
+curl -X PATCH http://localhost:3000/api/tasks/TASK_ID/undone
+```
+
 ### AI Prioritize Tasks
 
 ```bash
@@ -148,6 +176,8 @@ curl -X POST http://localhost:3000/api/tasks/prioritize \
   mood: "focused", // Optional
   priority: 8, // 1-10, assigned by AI
   reason: "AI's reasoning for priority",
+  isCompleted: false, // true when task is done
+  completedAt: null, // timestamp when completed
   createdAt: "2025-10-25T12:00:00Z"
 }
 ```
