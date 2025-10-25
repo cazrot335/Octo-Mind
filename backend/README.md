@@ -111,6 +111,13 @@ Server will run on `http://localhost:3000`
 - `GET /api/emotion/breathing-exercise` - Get breathing exercise
 - `GET /api/emotion/history` - Get emotion history/trends
 
+### Smart Scheduler
+
+- `POST /api/schedule/generate` - Generate smart daily schedule
+- `POST /api/schedule/reschedule` - Update schedule based on changes
+- `GET /api/schedule/history` - Get schedule history
+- `GET /api/schedule/suggestions` - Get scheduling suggestions based on mood
+
 ### Health Check
 
 - `GET /health` - Server health check
@@ -236,6 +243,147 @@ curl http://localhost:3000/api/emotion/breathing-exercise?intensity=intense
 curl http://localhost:3000/api/emotion/history?limit=10
 ```
 
+---
+
+## 📅 Smart Scheduler Examples
+
+### Generate Daily Schedule
+
+**Automatically uses pending tasks and recent mood:**
+
+```bash
+curl -X POST http://localhost:3000/api/schedule/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "preferences": {
+      "workStart": "09:00",
+      "workEnd": "18:00",
+      "breakDuration": 10,
+      "breakInterval": 90
+    }
+  }'
+```
+
+> **Note:** The scheduler automatically:
+> - Fetches all pending tasks from your task list
+> - Detects your most recent mood from emotion logs
+> - Uses `neutral` as default if no emotion logs exist
+> - You can override preferences, or use defaults (9am-6pm, 10min breaks every 90min)
+
+**Response:**
+```json
+{
+  "success": true,
+  "mood": "energetic",
+  "moodSource": "auto-detected from logs",
+  "workHours": "09:00 - 18:00",
+  "schedule": [
+    {
+      "type": "task",
+      "taskId": "task123",
+      "title": "Complete project proposal",
+      "category": "work",
+      "priority": 10,
+      "difficulty": 8,
+      "startTime": "09:00",
+      "endTime": "10:30",
+      "duration": 90
+    },
+    {
+      "type": "break",
+      "startTime": "10:30",
+      "endTime": "10:40",
+      "duration": 10,
+      "title": "☕ Break Time"
+    }
+  ],
+  "stats": {
+    "totalTasks": 5,
+    "totalTaskTime": 300,
+    "totalBreakTime": 30,
+    "freeTime": 210,
+    "overflowTasks": 2,
+    "workloadPercentage": 61
+  },
+  "recommendations": [
+    {
+      "type": "productivity",
+      "message": "Great energy! Your hardest tasks are scheduled first.",
+      "icon": "💪"
+    }
+  ]
+}
+```
+
+### Get Scheduling Suggestions
+
+```bash
+curl "http://localhost:3000/api/schedule/suggestions?mood=tired"
+```
+
+### Reschedule After Task Completion
+
+**Automatically uses recent mood or you can override:**
+
+```bash
+curl -X POST http://localhost:3000/api/schedule/reschedule \
+  -H "Content-Type: application/json" \
+  -d '{
+    "action": "remove",
+    "taskId": "task123"
+  }'
+```
+
+> **Note:** Mood is optional - it will auto-detect from emotion logs if not provided
+    "action": "remove",
+    "taskId": "task123"
+  }'
+```
+
+### Get Schedule History
+
+```bash
+curl "http://localhost:3000/api/schedule/history?limit=7"
+```
+
+---
+
+## 🎯 Complete Daily Workflow
+
+```bash
+# Morning: Check mood
+curl -X POST http://localhost:3000/api/emotion/check-in \
+  -H "Content-Type: application/json" \
+  -d '{"mood": "energetic"}'
+
+# Add tasks
+curl -X POST http://localhost:3000/api/tasks \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Complete project proposal",
+    "category": "work",
+    "estimatedDuration": 90
+  }'
+
+# Generate smart schedule
+curl -X POST http://localhost:3000/api/schedule/generate \
+  -H "Content-Type: application/json" \
+  -d '{"mood": "energetic"}'
+
+# Afternoon: Mood changes, reschedule
+curl -X POST http://localhost:3000/api/schedule/reschedule \
+  -H "Content-Type: application/json" \
+  -d '{"mood": "tired"}'
+
+# Complete task
+curl -X PATCH http://localhost:3000/api/tasks/TASK_ID/done
+
+# Evening: Review trends
+curl http://localhost:3000/api/emotion/history?limit=7
+```
+
+---
+
 
 ## Task Model
 
@@ -244,15 +392,52 @@ curl http://localhost:3000/api/emotion/history?limit=10
   id: "auto-generated",
   name: "Task name",
   dueDate: "2025-10-30T10:00:00Z", // Optional
-  category: "work", // work, study, personal, etc.
+  category: "work", // work, study, personal, exercise, meeting
   mood: "focused", // Optional
   priority: 8, // 1-10, assigned by AI
   reason: "AI's reasoning for priority",
+  estimatedDuration: 60, // minutes (default: 60)
   isCompleted: false, // true when task is done
   completedAt: null, // timestamp when completed
   createdAt: "2025-10-25T12:00:00Z"
 }
 ```
+
+## How Smart Scheduler Works
+
+### 1. Mood-Based Task Adjustment
+
+| Mood | Scheduling Strategy |
+|------|-------------------|
+| **Energetic** | Hard tasks first while energy is high |
+| **Tired** | Easy tasks first, complex work later |
+| **Stressed** | Quick wins first to reduce overwhelm |
+| **Neutral/Happy** | Priority-based, balanced approach |
+
+### 2. Automatic Time Allocation
+
+- Assigns time slots based on `estimatedDuration` (default: 60 mins)
+- Inserts 10-min breaks every 90 minutes of work
+- Detects overflow (tasks that don't fit) and suggests moving to next day
+- Respects work hours (configurable, default 9 AM - 6 PM)
+
+### 3. Task Difficulty Estimation
+
+Tasks are automatically rated 1-10 based on:
+- **Category**: work=7, study=8, personal=4, exercise=6, meeting=5
+- **Priority level**: Higher priority often = more difficult
+- **Keywords**: "complex", "difficult" → +2 difficulty; "quick", "simple" → -2
+
+### 4. Smart Recommendations
+
+The scheduler provides context-aware suggestions:
+- ⚠️ **Workload warnings** when schedule >90% full
+- 💡 **Free time suggestions** when <40% utilized
+- 📅 **Overflow management** for tasks that don't fit
+- 😴 **Health tips** based on mood (tired → more breaks)
+- 💪 **Productivity tips** based on energy levels
+
+---
 
 ## How AI Prioritization Works
 
