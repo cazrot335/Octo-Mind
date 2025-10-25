@@ -5,6 +5,7 @@ const { initializeFirebase } = require('./config/firebase');
 const taskRoutes = require('./routes/taskRoutes');
 const emotionRoutes = require('./routes/emotionRoutes');
 const schedulerRoutes = require('./routes/schedulerRoutes');
+const wellnessRoutes = require('./routes/wellnessRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ initializeFirebase();
 app.use('/api/tasks', taskRoutes);
 app.use('/api/emotion', emotionRoutes);
 app.use('/api/schedule', schedulerRoutes);
+app.use('/api/wellness', wellnessRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
