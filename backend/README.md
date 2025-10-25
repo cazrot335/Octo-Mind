@@ -104,6 +104,13 @@ Server will run on `http://localhost:3000`
 - `PATCH /api/tasks/:id/undone` - Mark a task as undone
 - `POST /api/tasks/prioritize` - AI prioritize tasks based on mood
 
+### Emotion Analysis
+
+- `POST /api/emotion/analyze` - Analyze emotion from text
+- `POST /api/emotion/check-in` - Quick mood check-in
+- `GET /api/emotion/breathing-exercise` - Get breathing exercise
+- `GET /api/emotion/history` - Get emotion history/trends
+
 ### Health Check
 
 - `GET /health` - Server health check
@@ -164,6 +171,71 @@ curl -X POST http://localhost:3000/api/tasks/prioritize \
 ```
 
 **Mood options:** energetic, focused, stressed, tired, relaxed, anxious, happy, motivated, etc.
+
+## Emotion Analysis Examples
+
+### Analyze Emotion from Text
+
+```bash
+curl -X POST http://localhost:3000/api/emotion/analyze \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "I am feeling exhausted after back-to-back meetings",
+    "context": {
+      "timeOfDay": "afternoon",
+      "taskCount": 5
+    }
+  }'
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "emotion": "tired",
+  "confidence": 0.92,
+  "reasoning": "AI detected exhaustion and fatigue from text",
+  "suggestions": [
+    "Take a 15-minute power nap if possible",
+    "Reorder tasks - do critical ones now, defer others",
+    "Consider rescheduling less urgent tasks for tomorrow"
+  ],
+  "feedback": {
+    "message": "You sound exhausted. Your wellbeing comes first!",
+    "actionItems": ["Take a 15-minute power nap if possible"],
+    "taskRecommendation": "Do only the most critical task now, defer the rest."
+  },
+  "aiUsed": true
+}
+```
+
+### Quick Mood Check-In
+
+```bash
+curl -X POST http://localhost:3000/api/emotion/check-in \
+  -H "Content-Type: application/json" \
+  -d '{"mood": "stressed"}'
+```
+
+### Get Breathing Exercise
+
+```bash
+# Normal intensity (default)
+curl http://localhost:3000/api/emotion/breathing-exercise
+
+# Light intensity
+curl http://localhost:3000/api/emotion/breathing-exercise?intensity=light
+
+# Intense (for high stress)
+curl http://localhost:3000/api/emotion/breathing-exercise?intensity=intense
+```
+
+### Get Emotion History
+
+```bash
+curl http://localhost:3000/api/emotion/history?limit=10
+```
+
 
 ## Task Model
 

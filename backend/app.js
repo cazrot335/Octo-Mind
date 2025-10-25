@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { initializeFirebase } = require('./config/firebase');
 const taskRoutes = require('./routes/taskRoutes');
+const emotionRoutes = require('./routes/emotionRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,7 @@ initializeFirebase();
 
 // Routes
 app.use('/api/tasks', taskRoutes);
+app.use('/api/emotion', emotionRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
