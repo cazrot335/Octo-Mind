@@ -336,22 +336,22 @@ function TaskManager() {
         )}
       </AnimatePresence>
 
-      {/* Filter Tabs */}
-      <div className="filter-tabs">
+      {/* Filter Buttons */}
+      <div className="filters">
         <button
-          className={`tab ${filter === 'all' ? 'active' : ''}`}
+          className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
           onClick={() => setFilter('all')}
         >
           <FaFilter /> All ({tasks.length})
         </button>
         <button
-          className={`tab ${filter === 'pending' ? 'active' : ''}`}
+          className={`filter-btn ${filter === 'pending' ? 'active' : ''}`}
           onClick={() => setFilter('pending')}
         >
           Pending ({tasks.filter(t => !t.isCompleted).length})
         </button>
         <button
-          className={`tab ${filter === 'completed' ? 'active' : ''}`}
+          className={`filter-btn ${filter === 'completed' ? 'active' : ''}`}
           onClick={() => setFilter('completed')}
         >
           <FaCheck /> Completed ({tasks.filter(t => t.isCompleted).length})

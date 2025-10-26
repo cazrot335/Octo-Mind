@@ -5,61 +5,118 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #0b0f14 0%, #1a1f2e 50%, #0b0f14 100%);
   min-height: 100vh;
-  color: #333;
+  color: #E5E5E5;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Animated neural background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(108, 99, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(255, 184, 76, 0.08) 0%, transparent 50%);
+  animation: neuralPulse 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes neuralPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.05); }
 }
 
 .App {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 .app-header {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
+  background: rgba(17, 22, 28, 0.8);
+  backdrop-filter: blur(20px);
   padding: 1.5rem 2rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px rgba(108, 99, 255, 0.2);
   text-align: center;
+  border-bottom: 1px solid rgba(108, 99, 255, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .app-header h1 {
-  font-size: 2.5rem;
-  color: #667eea;
+  font-size: 2.8rem;
+  background: linear-gradient(135deg, #6C63FF 0%, #00FFFF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 0.5rem;
   font-weight: 700;
+  text-shadow: 0 0 30px rgba(108, 99, 255, 0.5);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 10px rgba(108, 99, 255, 0.6)); }
+  50% { filter: drop-shadow(0 0 20px rgba(108, 99, 255, 0.9)); }
 }
 
 .tagline {
-  color: #666;
-  font-size: 0.95rem;
+  color: #9AA0A6;
+  font-size: 1rem;
   font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .app-main {
   flex: 1;
   padding: 2rem;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+  position: relative;
 }
 
-/* Scrollbar styling */
+/* Scrollbar styling - Neural theme */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(11, 15, 20, 0.5);
+  border-left: 1px solid rgba(108, 99, 255, 0.2);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(102, 126, 234, 0.5);
-  border-radius: 4px;
+  background: linear-gradient(180deg, #6C63FF 0%, #00FFFF 100%);
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(102, 126, 234, 0.7);
+  background: linear-gradient(180deg, #00FFFF 0%, #6C63FF 100%);
+}
+
+/* Glowing particle effect (optional floating orbs) */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) translateX(0px); }
+  33% { transform: translateY(-20px) translateX(10px); }
+  66% { transform: translateY(-10px) translateX(-10px); }
+}
+
+/* Selection color */
+::selection {
+  background: rgba(108, 99, 255, 0.4);
+  color: #E5E5E5;
 }
