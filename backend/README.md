@@ -87,7 +87,7 @@ npm run dev
 npm start
 ```
 
-Server will run on `http://localhost:3000`
+Server will run on `http://localhost:3001`
 
 ## API Endpoints
 
@@ -127,7 +127,7 @@ Server will run on `http://localhost:3000`
 ### Create a Task
 
 ```bash
-curl -X POST http://localhost:3000/api/tasks \
+curl -X POST http://localhost:3001/api/tasks \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Complete project documentation",
@@ -140,37 +140,37 @@ curl -X POST http://localhost:3000/api/tasks \
 ### Get All Tasks
 
 ```bash
-curl http://localhost:3000/api/tasks
+curl http://localhost:3001/api/tasks
 ```
 
 ### Get Pending Tasks Only
 
 ```bash
-curl http://localhost:3000/api/tasks/pending
+curl http://localhost:3001/api/tasks/pending
 ```
 
 ### Get Completed Tasks Only
 
 ```bash
-curl http://localhost:3000/api/tasks/completed
+curl http://localhost:3001/api/tasks/completed
 ```
 
 ### Mark Task as Done
 
 ```bash
-curl -X PATCH http://localhost:3000/api/tasks/TASK_ID/done
+curl -X PATCH http://localhost:3001/api/tasks/TASK_ID/done
 ```
 
 ### Mark Task as Undone
 
 ```bash
-curl -X PATCH http://localhost:3000/api/tasks/TASK_ID/undone
+curl -X PATCH http://localhost:3001/api/tasks/TASK_ID/undone
 ```
 
 ### AI Prioritize Tasks
 
 ```bash
-curl -X POST http://localhost:3000/api/tasks/prioritize \
+curl -X POST http://localhost:3001/api/tasks/prioritize \
   -H "Content-Type: application/json" \
   -d '{
     "mood": "stressed"
@@ -184,7 +184,7 @@ curl -X POST http://localhost:3000/api/tasks/prioritize \
 ### Analyze Emotion from Text
 
 ```bash
-curl -X POST http://localhost:3000/api/emotion/analyze \
+curl -X POST http://localhost:3001/api/emotion/analyze \
   -H "Content-Type: application/json" \
   -d '{
     "text": "I am feeling exhausted after back-to-back meetings",
@@ -219,7 +219,7 @@ curl -X POST http://localhost:3000/api/emotion/analyze \
 ### Quick Mood Check-In
 
 ```bash
-curl -X POST http://localhost:3000/api/emotion/check-in \
+curl -X POST http://localhost:3001/api/emotion/check-in \
   -H "Content-Type: application/json" \
   -d '{"mood": "stressed"}'
 ```
@@ -228,19 +228,19 @@ curl -X POST http://localhost:3000/api/emotion/check-in \
 
 ```bash
 # Normal intensity (default)
-curl http://localhost:3000/api/emotion/breathing-exercise
+curl http://localhost:3001/api/emotion/breathing-exercise
 
 # Light intensity
-curl http://localhost:3000/api/emotion/breathing-exercise?intensity=light
+curl http://localhost:3001/api/emotion/breathing-exercise?intensity=light
 
 # Intense (for high stress)
-curl http://localhost:3000/api/emotion/breathing-exercise?intensity=intense
+curl http://localhost:3001/api/emotion/breathing-exercise?intensity=intense
 ```
 
 ### Get Emotion History
 
 ```bash
-curl http://localhost:3000/api/emotion/history?limit=10
+curl http://localhost:3001/api/emotion/history?limit=10
 ```
 
 ---
@@ -252,7 +252,7 @@ curl http://localhost:3000/api/emotion/history?limit=10
 **Automatically uses pending tasks and recent mood:**
 
 ```bash
-curl -X POST http://localhost:3000/api/schedule/generate \
+curl -X POST http://localhost:3001/api/schedule/generate \
   -H "Content-Type: application/json" \
   -d '{
     "preferences": {
@@ -318,7 +318,7 @@ curl -X POST http://localhost:3000/api/schedule/generate \
 ### Get Scheduling Suggestions
 
 ```bash
-curl "http://localhost:3000/api/schedule/suggestions?mood=tired"
+curl "http://localhost:3001/api/schedule/suggestions?mood=tired"
 ```
 
 ### Reschedule After Task Completion
@@ -326,7 +326,7 @@ curl "http://localhost:3000/api/schedule/suggestions?mood=tired"
 **Automatically uses recent mood or you can override:**
 
 ```bash
-curl -X POST http://localhost:3000/api/schedule/reschedule \
+curl -X POST http://localhost:3001/api/schedule/reschedule \
   -H "Content-Type: application/json" \
   -d '{
     "action": "remove",
@@ -343,7 +343,7 @@ curl -X POST http://localhost:3000/api/schedule/reschedule \
 ### Get Schedule History
 
 ```bash
-curl "http://localhost:3000/api/schedule/history?limit=7"
+curl "http://localhost:3001/api/schedule/history?limit=7"
 ```
 
 ---
@@ -352,12 +352,12 @@ curl "http://localhost:3000/api/schedule/history?limit=7"
 
 ```bash
 # Morning: Check mood
-curl -X POST http://localhost:3000/api/emotion/check-in \
+curl -X POST http://localhost:3001/api/emotion/check-in \
   -H "Content-Type: application/json" \
   -d '{"mood": "energetic"}'
 
 # Add tasks
-curl -X POST http://localhost:3000/api/tasks \
+curl -X POST http://localhost:3001/api/tasks \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Complete project proposal",
@@ -366,20 +366,20 @@ curl -X POST http://localhost:3000/api/tasks \
   }'
 
 # Generate smart schedule
-curl -X POST http://localhost:3000/api/schedule/generate \
+curl -X POST http://localhost:3001/api/schedule/generate \
   -H "Content-Type: application/json" \
   -d '{"mood": "energetic"}'
 
 # Afternoon: Mood changes, reschedule
-curl -X POST http://localhost:3000/api/schedule/reschedule \
+curl -X POST http://localhost:3001/api/schedule/reschedule \
   -H "Content-Type: application/json" \
   -d '{"mood": "tired"}'
 
 # Complete task
-curl -X PATCH http://localhost:3000/api/tasks/TASK_ID/done
+curl -X PATCH http://localhost:3001/api/tasks/TASK_ID/done
 
 # Evening: Review trends
-curl http://localhost:3000/api/emotion/history?limit=7
+curl http://localhost:3001/api/emotion/history?limit=7
 ```
 
 ---
