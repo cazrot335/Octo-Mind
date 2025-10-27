@@ -9,7 +9,8 @@ import {
 import './WellnessGoals.css';
 
 const WellnessGoals = () => {
-  const API_BASE_URL = 'http://localhost:3001/api/wellness';
+  const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+  const API_BASE_URL = `${API_BASE}/api/wellness`;
   
   // State management
   const [goals, setGoals] = useState([]);

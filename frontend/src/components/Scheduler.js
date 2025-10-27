@@ -15,7 +15,8 @@ import {
 } from 'react-icons/fa';
 import './Scheduler.css';
 
-const API_BASE_URL = 'http://localhost:3001/api/schedule';
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const API_BASE_URL = `${API_BASE}/api/schedule`;
 
 const Scheduler = () => {
   // State

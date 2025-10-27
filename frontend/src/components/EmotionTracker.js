@@ -15,7 +15,8 @@ import {
 } from 'react-icons/fa';
 import './EmotionTracker.css';
 
-const API_BASE_URL = 'http://localhost:3001/api/emotion';
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const API_BASE_URL = `${API_BASE}/api/emotion`;
 
 const EmotionTracker = () => {
   // State

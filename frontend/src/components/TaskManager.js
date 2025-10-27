@@ -13,7 +13,8 @@ import {
 import axios from 'axios';
 import './TaskManager.css';
 
-const API_URL = 'http://localhost:3001/api/tasks';
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+const API_URL = `${API_BASE}/api/tasks`;
 
 const CATEGORIES = ['work', 'study', 'personal', 'health', 'other'];
 const MOODS = [
